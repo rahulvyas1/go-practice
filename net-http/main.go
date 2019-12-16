@@ -1,17 +1,17 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"net/http"
+    "fmt"
+    "net/http"
 )
 
 func main() {
-	http.HandleFunc("/users", usersHandleFunc)
-	log.Fatal(http.ListenAndServe(":8080", nil))
-}
+    http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintf(w, "Welcome to my website!")
+    })
 
-func usersHandleFunc(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("We got a request on /users")
-	fmt.Fprint(w, "Hi, thanks for calling my /users API with HTTP Method '%v' ", r.Method)
+    fs := http.FileServer(http.Dir("static/"))
+    http.Handle("/static/", http.StripPrefix("/static/", fs))
+
+    http.ListenAndServe(":80", nil)
 }
